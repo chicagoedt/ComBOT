@@ -1,6 +1,7 @@
 #include "XBOXRECV.h" // Xbox wireless controller code
 #include <Servo.h>
 #include "enums.h"    // Contains definition of Direction enum
+#include "joint.h"    // Contains structure for type joint
 
 // Below include statements are required by Xbox controller code
 // Satisfy the IDE, which needs to see the include statment in the ino too.
@@ -18,36 +19,16 @@ XBOXRECV Xbox(&Usb);
 // Default Joint values
 // (_d is short for "default")
 // See below for explanations
-const int controllerNum_d = 0;      
+const int controllerNum_d = 0;
 const int deadZone_d      = 3500;
 const int stepSize_d      = 3;
-const int angleMin_d      = 0;      
+const int angleMin_d      = 0;
 const int angleMax_d      = 180;
 
 // Time values
 unsigned long currentmillis;
 unsigned long previousmillis;
 unsigned long ontime = 45;
-
-// Main Joint struct
-typedef struct {
-  String jointName;     // Printed in Serial messages to identify this joint
-  Servo servo;          // Servo object is created by initializeJoint and does not need to be specified
-  int pin;              // Which pin this servo is connected to
-  int angleMin;         // Servo will be prevented from moving below this angle
-  int angleMax;         // Servo will be prevented from moving above this angle
-  int stepSize;         // Determines how far servo will attempt to rotate when moveServo() is called. Possibly a placebo.
-  int currentPosition;  // Current position of Servo. Only updated by checkJoint()
-  int controllerNum;    // Xbox can support up to 4 controllers. Default is 0.
-  // Button:
-  ButtonEnum clockwiseBtn;    // Clockwise and counterclockwise buttons
-  ButtonEnum ctrclockwiseBtn; // See controllerEnums.h in the USB Host Shield library for all options
-  // Stick:
-  bool isStick;               // True if this joint takes input from a stick. False otherwise.
-  AnalogHatEnum stickAxis;    // Valid options are: LeftHatX, LeftHatY, RightHatX, RightHatY
-  bool upOrRightIsClockwise;  // True if up or left on stick corresponds to Clockwise rotation. False otherwise.
-  int deadZone;               // Stick inputs (whose absolute value is) smaller than this value will be ignored
-} Joint;
 
 // Joints
 // Add new servo here!
@@ -105,9 +86,9 @@ Direction getInputDirection (Joint *joint)
     Serial.print(F("StickVal: "));
     Serial.println(stickVal);
     stickVal = stickVal / 2;  // Larger negative values cause problems for abs()
-    if (abs(stickVal) < joint->deadZone) 
-    { 
-      return NONE; 
+    if (abs(stickVal) < joint->deadZone)
+    {
+      return NONE;
     }
     if (joint->upOrRightIsClockwise)
     {
@@ -125,16 +106,16 @@ Direction getInputDirection (Joint *joint)
     bool c_btn = Xbox.getButtonPress(joint->clockwiseBtn, joint->controllerNum);
     bool cw_btn = Xbox.getButtonPress(joint->ctrclockwiseBtn, joint->controllerNum);
     if (c_btn && cw_btn) { return NONE; }
-    else if (c_btn) 
-    { 
+    else if (c_btn)
+    {
       Serial.println(F("Clockwise input"));
       return CLOCKWISE; }
-    else if (cw_btn) 
-    { 
+    else if (cw_btn)
+    {
       Serial.println(F("Counterclockwise input"));
-      return COUNTERCLOCKWISE; 
+      return COUNTERCLOCKWISE;
     }
-    return NONE;  
+    return NONE;
   }
 }
 
@@ -143,14 +124,14 @@ Direction getInputDirection (Joint *joint)
 bool canMove(Joint *joint, Direction d)
 {
   if (d == NONE) { return false; }
-  
+
   //int sign = (d == CLOCKWISE) ? 1 : -1 ;
 
   if (d == CLOCKWISE) {
-    if (joint->currentPosition + joint->stepSize < joint->angleMax) 
-    { 
+    if (joint->currentPosition + joint->stepSize < joint->angleMax)
+    {
       Serial.println(F("canMove says joint can move Clockwise"));
-      return true; 
+      return true;
     }
     Serial.println(F("canMove says joint cannot move Clockwise"));
     return false;
@@ -160,7 +141,7 @@ bool canMove(Joint *joint, Direction d)
     if (joint->currentPosition - joint->stepSize > joint->angleMin)
     {
       Serial.println(F("canMove says joint can move CounterClockwise"));
-      return true; 
+      return true;
     }
     Serial.println(F("canMove says joint cannot move CounterClockwise"));
     return false;
@@ -169,25 +150,25 @@ bool canMove(Joint *joint, Direction d)
 
 
 // Move joint servo in given direction, checking for safety
-void moveServo(Joint *joint, Direction d) 
+void moveServo(Joint *joint, Direction d)
 {
-  if (d == NONE) 
-  { 
+  if (d == NONE)
+  {
     Serial.print("Function moveServo() called with direction NONE and joint ");
     Serial.println(joint->jointName);
-    return; 
+    return;
   }
 
   char* directionStr = (d == CLOCKWISE) ? "Clockwise" : "Counterclockwise";
-  
-  if ( ! canMove(joint, d)) 
+
+  if ( ! canMove(joint, d))
   {
     Serial.print(joint->jointName);
     Serial.print(" cannot move ");
     Serial.println(directionStr);
-    return; 
+    return;
   }
-  
+
   int sign = (d == CLOCKWISE) ? 1 : -1 ;
   int delta = joint->stepSize * sign;
 
@@ -223,7 +204,7 @@ void setup() {
   Serial.begin(57600);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  
+
   if (Usb.Init() == -1)
   {
     Serial.print(F("USB Device failed to start. Execution will now halt."));
@@ -264,7 +245,7 @@ void loop() {
   // I don't know what this does, but the USB Shield requires it
   Usb.Task();
 
-  
+
   if (Xbox.XboxReceiverConnected != 1) {
     Serial.print(F("Waiting for Xbox Receiver connection... \n"));
     digitalWrite(LED_BUILTIN, LOW);
