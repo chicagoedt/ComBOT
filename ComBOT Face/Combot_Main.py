@@ -11,24 +11,24 @@ def main():
     stateCheck = 0
     i = 0
 
-    width = 480
-    height = 800
+    width = 800
+    height = width*(5/3)
     root = GraphWin("Wrench2.0", width, height)
     root.setCoords(-width/2,-height/2,width/2,height/2)
     root.setBackground(bgColor)
 
     center  = Point(0,0)
-    eyeSize = 50
-    eyeSeparate = 100
-    eyeHeight = 200
+    eyeSize = 50 * (width/480)
+    eyeSeparate = 100  * (width/480)
+    eyeHeight = 200 *(height/800)
     eyeWidth = 20
     # Basic eyebrows
-    browSep = 100
-    browDent = 25
-    browSide1 = 50
-    browSide2 = 125
-    browTilt = 5
-    browOffset = 40
+    browSep = 100 *(height/800)
+    browDent = 25 *(height/800)
+    browSide1 = 50 *(height/800)
+    browSide2 = 125 *(height/800)
+    browTilt = 5 *(height/800)
+    browOffset = 40  * (width/480)
     pointBrowL1= Point(-eyeSeparate - browSide1 - browOffset, eyeHeight + browSep - browTilt)
     pointBrowL2= Point(-eyeSeparate - browOffset, eyeHeight + browSep + browDent)
     pointBrowL3= Point(-eyeSeparate + browSide2 - browOffset, eyeHeight + browSep + browTilt)
@@ -36,12 +36,12 @@ def main():
     pointBrowR2= Point(eyeSeparate + browOffset, eyeHeight + browSep + browDent)
     pointBrowR3= Point(eyeSeparate + browSide1 + browOffset, eyeHeight + browSep - browTilt)
 # Angry Eyebrows
-    a_browSep = 100
-    a_browDent = 30
-    a_browSide1 = 50
-    a_browSide2 = 125
-    a_browTilt = -20
-    a_browOffset = 25
+    a_browSep = 100 *(height/800)
+    a_browDent = 30 *(height/800)
+    a_browSide1 = 50*(height/800)
+    a_browSide2 = 125*(height/800)
+    a_browTilt = -20*(height/800)
+    a_browOffset = 25 * (width/480)
     a_pointBrowL1= Point(-eyeSeparate - a_browSide1 - a_browOffset, eyeHeight + a_browSep - a_browTilt)
     a_pointBrowL2= Point(-eyeSeparate - a_browOffset, eyeHeight + a_browSep + a_browDent)
     a_pointBrowL3= Point(-eyeSeparate + a_browSide2 - a_browOffset, eyeHeight + a_browSep + a_browTilt)
@@ -49,12 +49,12 @@ def main():
     a_pointBrowR2= Point(eyeSeparate + a_browOffset, eyeHeight + a_browSep + a_browDent)
     a_pointBrowR3= Point(eyeSeparate + a_browSide1 + a_browOffset, eyeHeight + a_browSep - a_browTilt)
 # Sad Eyebrows
-    s_browSep = 100
-    s_browDent = 20
-    s_browSide1 = 50
-    s_browSide2 = 125
-    s_browTilt = 30
-    s_browOffset = 50
+    s_browSep = 100*(height/800)
+    s_browDent = 20*(height/800)
+    s_browSide1 = 50*(height/800)
+    s_browSide2 = 125*(height/800)
+    s_browTilt = 30*(height/800)
+    s_browOffset = 50  * (width/480)
     s_pointBrowL1= Point(-eyeSeparate - s_browSide1 - s_browOffset, eyeHeight + s_browSep - s_browTilt)
     s_pointBrowL2= Point(-eyeSeparate - s_browOffset, eyeHeight + s_browSep + s_browDent)
     s_pointBrowL3= Point(-eyeSeparate + s_browSide2 - s_browOffset, eyeHeight + s_browSep + s_browTilt)
@@ -62,8 +62,8 @@ def main():
     s_pointBrowR2= Point(eyeSeparate + s_browOffset, eyeHeight + s_browSep + s_browDent)
     s_pointBrowR3= Point(eyeSeparate + s_browSide1 + s_browOffset, eyeHeight + s_browSep - s_browTilt)
 
-    initBallOffset = -5
-    initBallSize = 15
+    initBallOffset = -5 * (width/480)
+    initBallSize = 15 * (width/480)
     flipFlop = 0
     tempX = 0
     tempY = 0
@@ -215,9 +215,10 @@ def blink(canvas,eL,eR,blink_objL,blink_objR,ebL,ebR): #Makes the eyes blink
 def brownian(bL,bR,tempX,tempY,flipFlop): # Moves the eye ball randomly
     clicker = randint(0,50)
     print(clicker)
+    limit = 15
     if(clicker == 5):
-        flickerX = randint(-15,15)
-        flickerY = randint(-15,15)
+        flickerX = randint(-limit,limit)
+        flickerY = randint(-limit,limit)
         print("Moving Reached")
 
         if (flipFlop == 0):
